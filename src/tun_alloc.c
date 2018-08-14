@@ -1,3 +1,4 @@
+#include <sys/socket.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/if.h>
@@ -6,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
-#include <sys/socket.h>
 #include <unistd.h>
 
 int tun_alloc(char *dev) {
