@@ -1,4 +1,6 @@
 #include <linux/if_ether.h>
+#include <stdint.h>
+
 struct eth_hdr
 {
     unsigned char dmac[6];

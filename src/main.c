@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "tap_alloc.h"
+#include "parse_protocol.h"
 
 int main() {
   char *tap_name = "tap0";
@@ -26,8 +27,6 @@ int main() {
       exit(1);
     }
 
-    /* Do whatever with the data */
-    //printf("Read %d bytes from device %s\n", nread, tap_name);
-    printf("%s\n", buffer);
+    print_ethernet(buffer, nread);
   }
 }
