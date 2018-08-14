@@ -1,22 +1,20 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <fcntl.h> 
-#include <sys/socket.h>
+#include <cstring>
+#include <errno.h>
+#include <fcntl.h>
 #include <linux/if.h>
 #include <linux/if_tun.h>
-#include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <cstring>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-
-int tun_alloc(char *dev)
-{
+int tun_alloc(char *dev) {
   struct ifreq ifr;
   int fd, err;
 
-  if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
+  if ((fd = open("/dev/net/tun", O_RDWR)) < 0) {
     printf("Cannot open TUN/TAP dev");
 
     exit(1);
@@ -30,38 +28,38 @@ int tun_alloc(char *dev)
    *        IFF_NO_PI - Do not provide packet information
    */
   ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
-  if( *dev ) {
+  if (*dev) {
     strncpy(ifr.ifr_name, dev, IFNAMSIZ);
   }
 
-  if( (err = ioctl(fd, TUNSETIFF, (void *) &ifr)) < 0 ){
+  if ((err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0) {
     printf("ERR: Could not ioctl tun: %s\n", strerror(err));
     close(fd);
     return err;
   }
 
-  //strncpy(dev, ifr.ifr_name, sizeof(dev));
+  // strncpy(dev, ifr.ifr_name, sizeof(dev));
   return fd;
 }
 
-int main()
-{
+int main() {
   char *tun_name = "tun0";
 
   /* Connect to the device */
-  int tun_fd = tun_alloc(tun_name);  /* tun interface */
+  int tun_fd = tun_alloc(tun_name); /* tun interface */
 
-  if(tun_fd < 0){
+  if (tun_fd < 0) {
     perror("Allocating interface");
     exit(1);
   }
 
   /* Now read data coming from the kernel */
-  while(1) {
-    /* Note that "buffer" should be at least the MTU size of the interface, eg 1500 bytes */
-    char *buffer[1600];  
-    int nread = read(tun_fd,buffer,sizeof(buffer));
-    if(nread < 0) {
+  while (1) {
+    /* Note that "buffer" should be at least the MTU size of the interface, eg
+     * 1500 bytes */
+    char *buffer[1600];
+    int nread = read(tun_fd, buffer, sizeof(buffer));
+    if (nread < 0) {
       perror("Reading from interface");
       close(tun_fd);
       exit(1);
@@ -70,6 +68,4 @@ int main()
     /* Do whatever with the data */
     printf("Read %d bytes from device %s\n", nread, tun_name);
   }
-
 }
-
